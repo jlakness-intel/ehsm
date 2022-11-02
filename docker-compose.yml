@@ -8,11 +8,15 @@ services:
         https_proxy: ${http_proxy}
     image: ehsm_docker
     environment:
-      - PCCS_URL=${PCCS_URL}
       - no_proxy=${no_proxy}
       - http_proxy=${http_proxy}
       - https_proxy=${https_proxy}
     devices:
       - /dev/sgx/enclave
       - /dev/sgx/provision
+    volumes:
+      - ./:/opt/intel/ehsm
+      - ~/.docker:/root/.docker
     privileged: true
+    stdin_open: true 
+    tty: true
