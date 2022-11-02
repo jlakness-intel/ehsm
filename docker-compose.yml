@@ -1,0 +1,18 @@
+services:
+  ehsm_docker:
+    container_name: ehsm_docker
+    build:
+      context: .
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${http_proxy}
+    image: ehsm_docker
+    environment:
+      - PCCS_URL=${PCCS_URL}
+      - no_proxy=${no_proxy}
+      - http_proxy=${http_proxy}
+      - https_proxy=${https_proxy}
+    devices:
+      - /dev/sgx/enclave
+      - /dev/sgx/provision
+    privileged: true
