@@ -20,7 +20,7 @@ services:
       context: .
       args:
        http_proxy: ${http_proxy}
-       https_proxy: ${http_proxy}
+       https_proxy: ${https_proxy}
        TAG_VERSION: ${EHSM_VERSION_STR}
     image: "${IMAGE_NAME_EHSM_BASE}:${EHSM_VERSION_STR}"
 
@@ -47,6 +47,7 @@ services:
       - /dev/sgx/provision
     depends_on:
       - ehsm_base
+      - pccs
 
   # eHSM Domain Key Cache service
   dkeycache:
@@ -118,18 +119,12 @@ services:
     container_name: c_pccs
     build:
       context: pccs
-      volumes:
-        - type: volume
-          source: pccs/certs
-          target: /opt/intel/pccs/ssl_key
-          read_only: true
-        - type: volume
-          source: config
-          target: /opt/intel/pccs/config
-          read_only: true
-      tmpfs:
-        - /opt/intel/pccs/logs/
-        - /tmp
+    volumes:
+      - ./pccs/certs:/opt/intel/pccs/ssl_key
+      - ./config:/opt/intel/pccs/config
+    tmpfs:
+      - /opt/intel/pccs/logs/
+      - /tmp
     healthcheck:
       test: pgrep -f  "/usr/bin/node -r esm pccs_server.js" || exit 1
     ports:
