@@ -112,3 +112,30 @@ services:
       - /dev/sgx/provision
     depends_on:
       - dkeycache
+
+  # pccs service
+  pccs:
+    container_name: c_pccs
+    build:
+      context: pccs
+      volumes:
+        - type: volume
+          source: pccs/certs
+          target: /opt/intel/pccs/ssl_key
+          read_only: true
+        - type: volume
+          source: config
+          target: /opt/intel/pccs/config
+          read_only: true
+      tmpfs:
+        - /opt/intel/pccs/logs/
+        - /tmp
+    healthcheck:
+      test: pgrep -f  "/usr/bin/node -r esm pccs_server.js" || exit 1
+    ports:
+      - 8081:8081
+    devices:
+      - /dev/sgx/enclave
+      - /dev/sgx/provision
+
+
