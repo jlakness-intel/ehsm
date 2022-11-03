@@ -6,6 +6,9 @@ services:
     image: couchdb:3.2
     ports:
       - "${COUCHDB_PORT}:5984"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: bridge
     volumes:
       - /opt/couchdb/data:/opt/couchdb/data
     environment:
@@ -35,6 +38,9 @@ services:
     image: "ehsm_dkeyserver:${EHSM_VERSION_STR}"
     ports:
       - "${DKEYSERVER_PORT}:8888"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: bridge
     volumes:
       - /var/run/aesmd:/var/run/aesmd
     environment:
@@ -87,6 +93,9 @@ services:
     image: "ehsm_kms_service:${EHSM_VERSION_STR}"
     ports:
       - "${KMS_PORT}:9000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: bridge
     volumes:
       - /var/run/aesmd:/var/run/aesmd
       - ${DKEYCACHE_SOCKET_LOCALTION}:${DKEYCACHE_SOCKET_LOCALTION}
@@ -117,11 +126,10 @@ services:
   # pccs service
   pccs:
     container_name: c_pccs
-    build:
-      context: pccs
+    image: intel/pccs
     volumes:
       - ./pccs/certs:/opt/intel/pccs/ssl_key
-      - ./config:/opt/intel/pccs/config
+      - ./pccs/config:/opt/intel/pccs/config
     tmpfs:
       - /opt/intel/pccs/logs/
       - /tmp
@@ -129,6 +137,9 @@ services:
       test: pgrep -f  "/usr/bin/node -r esm pccs_server.js" || exit 1
     ports:
       - 8081:8081
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: bridge
     devices:
       - /dev/sgx/enclave
       - /dev/sgx/provision
