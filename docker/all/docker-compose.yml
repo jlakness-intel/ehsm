@@ -1,0 +1,43 @@
+services:
+  couchdb:
+    container_name: c_couchdb
+    image: couchdb:3.2
+    ports:
+      - "5984:5984"
+    volumes:
+      - /opt/couchdb/data:/opt/couchdb/data
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=password
+  ehsm_all:
+    container_name: c_ehsm_all
+    build:
+      context: .
+    volumes:
+      - ./default.json:/opt/intel/pccs/config/default.json
+      - ./sgx_default_qcnl.conf:/etc/sgx_default_qcnl.conf
+      - ./start_all.sh:/home/start_all.sh
+    tmpfs:
+      - /opt/intel/pccs/logs/
+      - /tmp
+    ports:
+      - 9000:9000
+      - 8888:8888
+      - 8081:8081
+    devices:
+      - /dev/sgx/enclave
+      - /dev/sgx/provision
+    environment:
+      - PCCS_URL=https://127.0.0.1:8081
+      - EHSM_CONFIG_COUCHDB_USERNAME=admin
+      - EHSM_CONFIG_COUCHDB_PASSWORD=password
+      - EHSM_CONFIG_COUCHDB_PORT=5984
+      - EHSM_CONFIG_COUCHDB_SERVER=couchdb.local
+      - EHSM_CONFIG_COUCHDB_DB=ehsm_kms_db
+      - DKEYSERVER_IP=127.0.0.1
+      - DKEYSERVER_PORT=8888
+      - DKEYCACHE_SOCKET_LOCALTION='/var/run/ehsm']
+      - HOST_IP=127.0.0.1
+    entrypoint: [ "bash","-c","/home/start_all.sh" ]
+    links:
+      - couchdb:couchdb.local
