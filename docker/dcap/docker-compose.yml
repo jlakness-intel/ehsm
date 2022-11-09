@@ -1,0 +1,16 @@
+services:
+  dcap:
+    container_name: dcap
+    build:
+      context: .
+    volumes:
+      - ./default.json:/opt/intel/pccs/config/default.json
+      - ./sgx_default_qcnl.conf:/etc/sgx_default_qcnl.conf
+    tmpfs:
+      - /opt/intel/pccs/logs/
+      - /tmp
+    ports:
+      - 8081:8081
+    devices:
+      - /dev/sgx/enclave
+      - /dev/sgx/provision
