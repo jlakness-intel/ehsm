@@ -35,7 +35,7 @@
 # generate certificates
 cd ../certs
 openssl genrsa -out private.pem 2048
-openssl req -new -key private.pem -out csr.pem
+openssl req -new -key private.pem -out csr.pem -batch
 openssl x509 -req -days 365 -in csr.pem -signkey private.pem -out file.crt
 rm -rf csr.pem
 chmod 644 private.pem
