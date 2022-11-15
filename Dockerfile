@@ -13,7 +13,8 @@ RUN wget https://download.01.org/intel-sgx/sgx-linux/2.16/as.ld.objdump.r4.tar.g
     wget https://download.01.org/intel-sgx/sgx-dcap/1.13/linux/distro/ubuntu20.04-server/sgx_linux_x64_sdk_2.16.100.4.bin && \
     chmod a+x ./sgx_linux_x64_sdk_2.16.100.4.bin && \
     printf "yes\n" | ./sgx_linux_x64_sdk_2.16.100.4.bin &&\
-    source /opt/intel/sgxsdk/environment
+    source /opt/intel/sgxsdk/environment &&\
+    echo "source /opt/intel/sgxsdk/environment" >> ~/.bashrc
 ## install DCAP
 RUN wget https://download.01.org/intel-sgx/sgx-dcap/1.13/linux/distro/ubuntu20.04-server/sgx_debian_local_repo.tgz &&\
     tar xzf sgx_debian_local_repo.tgz &&\
@@ -26,9 +27,10 @@ RUN apt update && DEBIAN_FRONTEND=noninteractive apt-get install -y libsgx-encla
     #    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose &&\
     #    docker-compose --version
 # build EHSM
-RUN git clone --recursive https://github.com/intel/ehsm.git ehsm
+# RUN git clone --recursive https://github.com/jlakness-intel/ehsm.git ehsm
 # run EHSM
-#CMD cd /opt/intel/ehsm/docker && docker-compose -f docker-compose.yml logs -f
+# ENTRYPOINT ["bash" "-c" "docker-compose -f /opt/intel/ehsm/dockerdocker-compose.yml logs -f"]
+
 
 
 
